@@ -1,0 +1,26 @@
+version: "3.9"
+services:
+  overseerr:
+    image: sctx/overseerr:latest
+    container_name: overseerr
+    environment:
+      - LOG_LEVEL=info
+      - PGID=${GROUP_ID}
+      - TZ=${TIMEZONE}
+      - PORT=5055
+    ports:
+      - "5055:5055"
+    volumes:
+      - ${CONFIG_ROOT}/overseerr:/app/config
+      - ${LOG_ROOT}/overseerr:/app/config/logs
+    restart: always
+    labels:
+      - homepage.group=Helpers
+      - homepage.name=Overseerr
+      - homepage.icon=overseerr.png
+      - homepage.href=https://${OVERSEERR_HOSTNAME}
+      - homepage.description=Indexers management
+      - homepage.weight=4
+      - homepage.widget.type=overseerr
+      - homepage.widget.url=http://overseerr:5055
+      - homepage.widget.key=${OVERSEERR_API_KEY}

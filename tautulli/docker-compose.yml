@@ -1,0 +1,31 @@
+version: "3.9"
+services:
+  tautulli:
+    image: tautulli/tautulli
+    container_name: tautulli
+    restart: unless-stopped
+    volumes:
+      - ${CONFIG_ROOT}/tautulli:/config
+      - ${LOG_ROOT}/tautulli:/config/logs
+      - ${BACKUPS_ROOT}/tautulli:/config/backups
+    ports:
+      - "8181:8181"
+    environment:
+      - PUID=${USER_ID}
+      - PGID=${GROUP_ID}
+      - TZ=${TIMEZONE}
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.tautulli.rule=(PathPrefix(`/tautulli`))
+      - traefik.http.routers.tautulli.tls=true
+      - traefik.http.routers.tautulli.tls.certresolver=myresolver
+      - traefik.http.services.tautulli.loadbalancer.server.port=8181
+      - homepage.group=Media
+      - homepage.name=Plex
+      - homepage.icon=plex.png
+      - homepage.href=/tautulli
+      - homepage.description=Plex (Tautulli)
+      - homepage.weight=5
+      - homepage.widget.type=tautulli
+      - homepage.widget.url=http://tautulli:8181/tautulli/
+      - homepage.widget.key=${TAUTULLI_API_KEY}

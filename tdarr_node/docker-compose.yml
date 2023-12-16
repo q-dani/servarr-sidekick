@@ -1,0 +1,27 @@
+version: "3.9"
+services:
+  tdarr-node:
+    image: ghcr.io/haveagitgat/tdarr_node:latest
+    container_name: tdarr-node
+    restart: unless-stopped
+    user: 0:0
+    volumes:
+      - ${CONFIG_ROOT}/tdarr_node:/app/configs
+      - ${LOG_ROOT}/tdarr_node:/app/logs
+      - ${DATA_ROOT}:/data
+      - ${TDARR_CACHE}:/temp
+    environment:
+      - TZ=${TIMEZONE}
+      - serverPort=${TDARR_SERVER_PORT}
+      - serverIP=${TDARR_SERVER_IP}
+      - nodeName=${TDARR_NODE_NAME}
+      - inContainer=true
+    labels:
+      - homepage.group=Helpers
+      - homepage.name=Tdarr Node
+      - homepage.icon=tdarr.png
+      - homepage.href=/tdarr/
+      - homepage.description=Tdarr Node (GPU)
+      - homepage.weight=5
+    devices:
+      - /dev/dri:/dev/dri

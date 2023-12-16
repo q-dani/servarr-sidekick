@@ -9,8 +9,12 @@ services:
       - PGID=${GROUP_ID}
       - TZ=${TIMEZONE}
     volumes:
-      - ./sabnzbd:/config
-      - ${DATA_ROOT}:/data
+      - ${CONFIG_ROOT}/sabnzbd:/config
+      - ${LOG_ROOT}/sabnzbd:/config/logs
+      - ${NZB_DOWNLOAD_ROOT}:/downloads
+      - ${NZB_DOWNLOAD_TEMP}:/incomplete-downloads
+      - ${NZB_DOWNLOAD_ROOT}:/config/Downloads/complete
+      - ${NZB_DOWNLOAD_TEMP}:/config/Downloads/incomplete
     restart: always
     labels:
       - traefik.enable=true
@@ -18,9 +22,13 @@ services:
       - traefik.http.routers.sabnzbd.tls=true
       - traefik.http.routers.sabnzbd.tls.certresolver=myresolver
       - traefik.http.services.sabnzbd.loadbalancer.server.port=8080
-      - homepage.group=Media
+      - homepage.group=Download
       - homepage.name=Sabnzbd
       - homepage.icon=sabnzbd.png
       - homepage.href=/sabnzbd
       - homepage.description=Usenet
       - homepage.weight=6
+      - homepage.widget.type=sabnzbd
+      - homepage.widget.url=http://sabnzbd:8080
+      - homepage.widget.key=${SABNZBD_API_KEY}
+      - com.centurylinklabs.watchtower.enable=true
