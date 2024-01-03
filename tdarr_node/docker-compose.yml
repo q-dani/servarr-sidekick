@@ -17,7 +17,7 @@ services:
       - nodeName=${TDARR_NODE_NAME}
       - inContainer=true
     labels:
-      - homepage.group=Helpers
+      - homepage.group=Encoding
       - homepage.name=Tdarr Node
       - homepage.icon=tdarr.png
       - homepage.href=/tdarr/

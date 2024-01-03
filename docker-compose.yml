@@ -15,13 +15,25 @@ services:
     restart: unless-stopped
 
   watchtower:
-    image: containrrr/watchtower
+    image: containrrr/watchtower:latest
     container_name: watchtower
     restart: always
     environment:
       - WATCHTOWER_CLEANUP=true
+      - WATCHTOWER_HTTP_API_TOKEN=watchtoweriscool
+      - WATCHTOWER_HTTP_API_METRICS=true
+    labels:
+      - homepage.group=Core Services
+      - homepage.name=Watchtower
+      - homepage.icon=watchtower.png
+      - homepage.description=Watchtower Container Management
+      - homepage.weight=4
+      - homepage.widget.type=watchtower
+      - homepage.widget.url=http://watchtower:8080
+      - homepage.widget.key=watchtoweriscool
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
+    command: --interval 900
 
   autoheal:
     image: willfarrell/autoheal:latest
@@ -43,6 +55,8 @@ services:
       - AWS_HOSTED_ZONE_ID=${AWS_HOSTED_ZONE_ID}
       - LETS_ENCRYPT_EMAIL=${LETS_ENCRYPT_EMAIL}
     command:
+      - --api=true
+      - --api.insecure=true
       - --ping=true
       - --providers.docker=true
       - --providers.docker.exposedbydefault=false
@@ -71,6 +85,14 @@ services:
       test: [ "CMD", "traefik", "healthcheck", "--ping" ]
       interval: 5s
       retries: 10
+    labels:
+      - homepage.group=Core Services
+      - homepage.name=Traefik
+      - homepage.icon=traefik.png
+      - homepage.description=Traefik Proxy
+      - homepage.weight=4
+      - homepage.widget.type=traefik
+      - homepage.widget.url=http://traefik:8080
 
 networks:
   default:

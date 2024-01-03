@@ -1,0 +1,36 @@
+version: '3.9'
+
+services:
+  radarr-uhd:
+    image: lscr.io/linuxserver/radarr:latest
+    container_name: radarr-uhd
+    environment:
+      - PUID=${USER_ID}
+      - PGID=${GROUP_ID}
+      - TZ=${TIMEZONE}
+    volumes:
+      - ${CONFIG_ROOT}/radarr-uhd:/config
+      - ${LOG_ROOT}/radarr-uhd:/config/logs
+      - ${BACKUPS_ROOT}/radarr-uhd:/config/Backups
+      - ${DATA_ROOT}:/data
+    restart: always
+    healthcheck:
+      test: [ "CMD", "curl", "--fail", "http://127.0.0.1:7878/radarrhd/ping" ]
+      interval: 5s
+      retries: 10
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.radarrhd.rule=(PathPrefix(`/radarrhd`))
+      - traefik.http.routers.radarrhd.tls=true
+      - traefik.http.routers.radarrhd.tls.certresolver=myresolver
+      - traefik.http.services.radarrhd.loadbalancer.server.port=7878
+      - homepage.group=Media Management
+      - homepage.name=Radarr HD
+      - homepage.icon=radarr.png
+      - homepage.href=/radarrhd
+      - homepage.description=4k/UHD Movie Management
+      - homepage.weight=5
+      - homepage.widget.type=radarr
+      - homepage.widget.url=http://radarr-uhd:7878/radarrhd
+      - homepage.widget.key=${RADARR_API_KEY}
+

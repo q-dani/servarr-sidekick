@@ -1,0 +1,32 @@
+version: '3.9'
+
+services:
+  bazarr-uhd:
+    image: lscr.io/linuxserver/bazarr:latest
+    container_name: bazarr-uhd
+    environment:
+      - PUID=${USER_ID}
+      - PGID=${GROUP_ID}
+      - TZ=${TIMEZONE}
+    volumes:
+      - ${CONFIG_ROOT}/bazarr-uhd:/config
+      - ${LOG_ROOT}/bazarr-uhd:/config/log
+      - ${BACKUPS_ROOT}/bazarr-uhd:/config/backup
+      - ${DATA_ROOT}:/data
+    restart: always
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.bazarrhd.rule=(PathPrefix(`/bazarrhd`))
+      - traefik.http.routers.bazarrhd.tls=true
+      - traefik.http.routers.bazarrhd.tls.certresolver=myresolver
+      - traefik.http.services.bazarrhd.loadbalancer.server.port=6767
+      - homepage.group=Media Management
+      - homepage.name=Bazarr HD
+      - homepage.icon=bazarr.png
+      - homepage.href=/bazarrhd
+      - homepage.description=4k Subtitle management
+      - homepage.weight=6
+      - homepage.widget.type=bazarr
+      - homepage.widget.url=http://bazarr-uhd:6767/bazarrhd
+      - homepage.widget.key=${BAZARR_API_KEY}
+

@@ -1,0 +1,38 @@
+version: '3.9'
+
+services:
+  duplicati:
+    image: lscr.io/linuxserver/duplicati:latest
+    container_name: duplicati
+    environment:
+      - PUID=${USER_ID}
+      - PGID=${GROUP_ID}
+      - TZ=${TIMEZONE}
+      - CLI_ARGS=--all-versions
+    volumes:
+      - ${CONFIG_ROOT}/duplicati:/config
+      - ${BACKUPS_DEST}:/backups
+      - ${DATA_ROOT}:/source/media-data
+      - ${CONFIG_ROOT}:/source/servarrsidekick-data
+      - ${LOG_ROOT}:/source/servarrsidekick-logs
+    restart: always
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.duplicati.rule=(PathPrefix(`/duplicati`))
+      - traefik.http.routers.duplicati.tls=true
+      - traefik.http.routers.duplicati.tls.certresolver=myresolver
+      - traefik.http.services.duplicati.loadbalancer.server.port=8200
+      - traefik.http.routers.duplicati.middlewares=duplicati-strip-slash,duplicati-stripprefix
+      # https://github.com/duplicati/qBittorrent/issues/5693#issuecomment-552146296
+      - traefik.http.middlewares.duplicati-stripprefix.stripPrefix.prefixes=/duplicati
+      # https://community.traefik.io/t/middleware-to-add-the-if-needed/1895/19
+      - traefik.http.middlewares.duplicati-strip-slash.redirectregex.regex=(^.*\/duplicati$$)
+      - traefik.http.middlewares.duplicati-strip-slash.redirectregex.replacement=$$1/
+      - traefik.http.middlewares.duplicati-strip-slash.redirectregex.permanent=false
+      - homepage.group=Core Services
+      - homepage.name=Duplicati
+      - homepage.icon=sonarr.png
+      - homepage.href=/duplicati
+      - homepage.description=Backup Management
+      - homepage.weight=3
+

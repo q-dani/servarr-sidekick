@@ -10,10 +10,12 @@ services:
       - ${LOG_ROOT}/tdarr_server:/app/logs
       - ${DATA_ROOT}:/data
       - ${TDARR_CACHE}:/temp
+      - /mnt/data/tdarr:/media
     ports:
       - "8265:8265"
       - "8266:8266"
     environment:
+      - THREADS_WORKER_INIT_TIMEOUT=20000000
       - PUID=${USER_ID}
       - PGID=${GROUP_ID}
       - TZ=${TIMEZONE}
@@ -33,7 +35,7 @@ services:
       - traefik.http.middlewares.tdarr-strip-slash.redirectregex.regex=(^.*\/tdarr$$)
       - traefik.http.middlewares.tdarr-strip-slash.redirectregex.replacement=$$1/
       - traefik.http.middlewares.tdarr-strip-slash.redirectregex.permanent=false
-      - homepage.group=Helpers
+      - homepage.group=Encoding
       - homepage.name=Tdarr
       - homepage.icon=tdarr.png
       - homepage.href=/tdarr/

@@ -15,11 +15,11 @@ services:
       - ${LOG_ROOT}/overseerr:/app/config/logs
     restart: always
     labels:
-      - homepage.group=Helpers
+      - homepage.group=External Services
       - homepage.name=Overseerr
       - homepage.icon=overseerr.png
       - homepage.href=https://${OVERSEERR_HOSTNAME}
-      - homepage.description=Indexers management
+      - homepage.description=Media Request Portal
       - homepage.weight=4
       - homepage.widget.type=overseerr
       - homepage.widget.url=http://overseerr:5055

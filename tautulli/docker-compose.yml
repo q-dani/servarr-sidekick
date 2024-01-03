@@ -1,7 +1,7 @@
 version: "3.9"
 services:
   tautulli:
-    image: tautulli/tautulli
+    image: tautulli/tautulli:latest
     container_name: tautulli
     restart: unless-stopped
     volumes:
@@ -20,7 +20,7 @@ services:
       - traefik.http.routers.tautulli.tls=true
       - traefik.http.routers.tautulli.tls.certresolver=myresolver
       - traefik.http.services.tautulli.loadbalancer.server.port=8181
-      - homepage.group=Media
+      - homepage.group=External Services
       - homepage.name=Plex
       - homepage.icon=plex.png
       - homepage.href=/tautulli

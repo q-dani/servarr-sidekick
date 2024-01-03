@@ -1,0 +1,35 @@
+version: "3.9"
+services:
+  lidarr-flac:
+    image: lscr.io/linuxserver/lidarr:latest
+    container_name: lidarr-flac
+    environment:
+      - PUID=${USER_ID}
+      - PGID=${GROUP_ID}
+      - TZ=${TIMEZONE}
+    volumes:
+      - ${CONFIG_ROOT}/lidarr-flac:/config
+      - ${LOG_ROOT}/lidarr-flac:/config/logs
+      - ${BACKUPS_ROOT}/lidarr-flac:/config/Backups
+      - ${DATA_ROOT}:/data
+    restart: always
+    healthcheck:
+      test: [ "CMD", "curl", "--fail", "http://127.0.0.1:8686/lidarrflac/ping" ]
+      interval: 5s
+      retries: 10
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.lidarrflac.rule=(PathPrefix(`/lidarrflac`))
+      - traefik.http.routers.lidarrflac.tls=true
+      - traefik.http.routers.lidarrflac.tls.certresolver=myresolver
+      - traefik.http.services.lidarrflac.loadbalancer.server.port=8686
+      - homepage.group=Media Management
+      - homepage.name=Lidarr FLAC
+      - homepage.icon=lidarr.png
+      - homepage.href=/lidarrflac
+      - homepage.description=FLAC Music management
+      - homepage.weight=7
+      - homepage.widget.type=lidarr
+      - homepage.widget.url=http://lidarr-flac:8686/lidarrflac
+      - homepage.widget.key=${LIDARR_API_KEY}
+

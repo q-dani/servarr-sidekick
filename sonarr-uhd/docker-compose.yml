@@ -1,0 +1,36 @@
+version: '3.9'
+
+services:
+  sonarr-uhd:
+    image: lscr.io/linuxserver/sonarr:latest
+    container_name: sonarr-uhd
+    environment:
+      - PUID=${USER_ID}
+      - PGID=${GROUP_ID}
+      - TZ=${TIMEZONE}
+    volumes:
+      - ${CONFIG_ROOT}/sonarr-uhd:/config
+      - ${LOG_ROOT}/sonarr-uhd:/config/logs
+      - ${BACKUPS_ROOT}/sonarr-uhd:/config/Backups
+      - ${DATA_ROOT}:/data
+    restart: always
+    healthcheck:
+      test: [ "CMD", "curl", "--fail", "http://127.0.0.1:8989/sonarrhd/ping" ]
+      interval: 5s
+      retries: 10
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.sonarrhd.rule=(PathPrefix(`/sonarrhd`))
+      - traefik.http.routers.sonarrhd.tls=true
+      - traefik.http.routers.sonarrhd.tls.certresolver=myresolver
+      - traefik.http.services.sonarrhd.loadbalancer.server.port=8989
+      - homepage.group=Media Management
+      - homepage.name=Sonarr HD
+      - homepage.icon=sonarr.png
+      - homepage.href=/sonarrhd
+      - homepage.description=4k/UHD TV Series Management
+      - homepage.weight=4
+      - homepage.widget.type=sonarr
+      - homepage.widget.url=http://sonarr-uhd:8989/sonarrhd
+      - homepage.widget.key=${SONARR_API_KEY}
+
